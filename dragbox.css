@@ -1,0 +1,66 @@
+:root {
+  --db-base-background: rgb(255, 255, 255);
+  --db-border-color: rgba(255, 255, 255, 0.5);
+  --db-bordee-radius: 0.5rem;
+  --db-default-block-width: 5rem;
+  --db-default-block-height: 5rem;
+  --db-dragzone-bg-color-1: rgb(25, 123, 210);
+  --db-dragzone-bg-color-2: rgb(0, 240, 192);
+}
+
+.dragbox-container {
+  display: flex;
+  transition: min-width 0.3s ease-in-out, min-height 0.3s ease-in-out, background 0.3s ease-in-out;
+}
+.dragbox-container * {
+  min-height: 0px;
+  transition: min-width 0.3s ease-in-out, min-height 0.3s ease-in-out, background 0.3s ease-in-out;
+}
+.dragbox-container .dropzone {
+  display: flex;
+  flex-direction: column;
+  /* &.empty {
+      border: solid 1px var(--db-border-color);
+  } */
+}
+.dragbox-container .dropzone .dragbox-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem;
+  border: solid 1px var(--db-border-color);
+}
+.dragbox-container .dropzone .dragbox-placeholder:has(.dragbox-add:hover) {
+  background: var(--db-border-color);
+}
+.dragbox-container .dropzone .dragbox-placeholder .dragbox-add {
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+.dragbox-container .dragbox {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
+}
+.dragbox-container .dragbox.dragging {
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+.dragbox-container .dragbox:not(:first-child) {
+  border-top: solid 2px var(--db-border-color);
+}
+.dragbox-container .dragbox[data-dragboxDepth="1"]:not(:first-child) {
+  border-top: none;
+  margin-top: 0.5rem;
+}
+
+.inputs {
+  display: flex;
+}/*# sourceMappingURL=dragbox.css.map */
