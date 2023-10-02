@@ -1,15 +1,8 @@
-import { cssRgbToHsl, deepMerge, calculateDepth, findParentWithClass } from "./js/utils.js";
+// Import utility functions from utils.js
 
+import { cssRgbToHsl, deepMerge, calculateDepth, findParentWithClass } from "./utils.js";
 
-/** 
- * cssRgbToHsl => given an rgb string, it returns a css ready hsl string
- * deepMerge => function to deep merge objects
- * calculateDepth => calculate the relative depth of an element with a class (given a nested structure with divs with that class)
- * findParentWithClass => return the first parent with a specific class
- */
-
-
-//settings
+// Define default options and an empty settings object in which will be stored settings based on user's option
 let defaultOptions = {
     dragging: {
         free: true,
@@ -21,22 +14,28 @@ let defaultOptions = {
     }
 }
 
-let settings = {
-    
-}
+let settings = {}
 
-let dragboxContainer = document.getElementById("dragbox-container");
+// Get references to important elements and initialize IDs
+
+let dragboxContainer = document.getElementById('dragbox-container');
 let dragboxTemplate = document.getElementById('dragbox-template');
 let dropzoneID = 0;
 let dragboxID = 0;
 
+// Create a custom event for dragbox creation
 const dragboxCreatedEvent = new Event('dragboxCreated');
 
+// Create an object to store dragged box information
 let draggedboxStore = {
     draggedboxID: "",
     draggedboxSize: {w: 0, h: 0},
 }
 
+/**
+ * Define colorDragbox function to calculate dragbox color based on settings and depth.
+ * @param {HTMLElement} dragbox The element to stylize.
+ */
 const colorDragbox = dragbox => {
     if (settings.dragbox.colorMethod == "alternate") {
         dragbox.style.background = dragbox.getAttribute('data-dragboxdepth') % 2 === 0 ? settings.dragbox.color1 : settings.dragbox.color2;
@@ -47,6 +46,9 @@ const colorDragbox = dragbox => {
     }
 }
 
+/**
+ * Function to update all dragboxes depth and color.
+ */
 const updateDragboxes = () => {
     const dragboxes = document.querySelectorAll('.dragbox');
     
@@ -57,18 +59,29 @@ const updateDragboxes = () => {
     });
 }
 
+/**
+ * Function to create a new dragbox.
+ * @param {Number} lastDragboxID Most recent ID used for dragbox.
+ * @param {Number} depth Depth of the element in which the dragbox is created (returned dragbox will have data-dragboxdepth = depth+1).
+ * @returns an HTMLElement: the dragbox created.
+ */
 const createDragbox = (lastDragboxID, depth) => {
+    // Create a new dragbox based on template
     const dragbox = dragboxTemplate.cloneNode(true);
+    // Assign a new id and update the id
     dragbox.id = `dragbox-${lastDragboxID}`;
     dragboxID++;
+    // Reset display style inherited from template
     dragbox.style.display = '';
+    // Add the dragbox class and other attributes
     dragbox.classList.add('dragbox');
     dragbox.setAttribute('data-dragboxdepth', (depth + 1));
     dragbox.setAttribute('draggable', true);
 
-    
+    // Create a new dropzone inside the new dragbox
     dragbox.appendChild(createDropzone(dropzoneID));
 
+    // Adding the event listeners [TODO: Use single listeners on dragboxjs-container]
     dragbox.addEventListener('dragstart', event => {
         //event.stopPropagation();
 
@@ -126,16 +139,22 @@ const createDragbox = (lastDragboxID, depth) => {
         draggedbox.style.top = ``;
     });
 
-    dragbox
     return dragbox;
 }
 
+/**
+ * Function to create a new dropzone.
+ * @param {Number} lastDropzoneID Most recent ID used for dropzone.
+ * @returns an HTMLElement: the dropzone created.
+ */
 const createDropzone = (lastDropzoneID) => {
+    // Create the element, assing class and id and update id [TODO: better ids management with proper functions in a new DragboxJS class]
     const dropzone = document.createElement('div');
     dropzone.classList.add('dropzone');
     dropzone.id = `dropzone-${lastDropzoneID}`;
     dropzoneID++;
 
+    // Add event listeners [TODO: Use single listeners on dragboxjs-container]
     dropzone.addEventListener('dragover', event => {
         event.preventDefault();
         event.stopPropagation();
@@ -183,31 +202,54 @@ const createDropzone = (lastDropzoneID) => {
         dragboxUpdate();
     })
 
-
     return dropzone;
 }
 
+/**
+ * Function to handle the creation of a new dragbox on click.
+ * @param {Event} event Event which triggers the function.
+ * @returns 
+ */
 const handleNewDragbox = event => {
+    // get the closest dropzone and the closest dragbox's depth
     const dropzone = event.target.closest('.dropzone');
     let dragboxdepth = event.target.closest('.dragbox')?.getAttribute('data-dragboxdepth');
 
+    // set depth to 0 if dragboxdepth is undefined
     dragboxdepth = dragboxdepth ? parseInt(dragboxdepth) : 0;
 
+    // check if dropzone exists
     if (!dropzone) return;
 
+    // logging [TODO: logging based on settings]
     console.log(`Adding box in ${dropzone.id}...`);
 
+    // create a new dragbox
     const newDragbox = createDragbox(dragboxID, dragboxdepth);
-    const populatedDropzone = createDropzone(dropzoneID).appendChild(newDragbox);
-    dropzone.insertBefore(populatedDropzone, dropzone.childNodes[dropzone.childElementCount - 1]);
 
+    /* // create a new dropzone to contain the new dragbox
+    const populatedDropzone = createDropzone(dropzoneID).appendChild(newDragbox); */
+
+    // insert the new dragbox before the "placeholder" element which creates dragboxes on click
+    dropzone.insertBefore(newDragbox, dropzone.childNodes[dropzone.childElementCount - 1]);
+
+    // dispatch a dragboxCreated event to link other possible functions
     newDragbox.dispatchEvent(dragboxCreatedEvent);
+
+    // update DragboxJS
     dragboxUpdate();
 }
 
+/**
+ * Function to create a dragboxPlaceholder.
+ * @param {HTMLElement} dropzone The HTML element in which the placeholder will be created.
+ * @returns 
+ */
 const createBoxPlaceholder = (dropzone) => {
+    // check if a placeholder is already present
     if (dropzone.querySelector(".dragbox-placeholder")) return
 
+    // create placeholder and its button
     const placeholder = document.createElement('div');
     placeholder.classList.add('dragbox-placeholder')
 
@@ -220,17 +262,22 @@ const createBoxPlaceholder = (dropzone) => {
     dropzone.appendChild(placeholder);
 }
 
+/**
+ * Set css parameters for an element based on settings and element.
+ * @param {String} type Type of element (dragbox, dropzone...).
+ * @param {HTMLElement} element Element to style.
+ */
 const setParams = (type, element) => {
     for (const key in settings[type]) {
         element.style[key]= settings[type][key];
     }
 }
 
+/**
+ * Initialize settings based on options.
+ * @param {Object} options Configuration object.
+ */
 const initSettings = (options) => {
-    /* settings['dropzone'] = {
-        position: options?.dragging.free ? "absolute" : "relative",
-    }; */
-
     settings['dragbox'] = {
         position: options?.dragging.free ? "absolute" : "relative",
         colorMethod: options?.dragbox?.colorMethod,
@@ -239,9 +286,14 @@ const initSettings = (options) => {
     }
 }
 
+/**
+ * Function to update DragboxJS
+ */
 const dragboxUpdate = () => {
+    // Get all dropzones
     const dropzones = dragboxContainer.querySelectorAll(".dropzone");
 
+    // Check if any dropzone is empty
     dropzones.forEach(dropzone=>{
         //setParams("dropzone", dropzone);
 
@@ -249,16 +301,22 @@ const dragboxUpdate = () => {
 
         if (!hasBox) {
             dropzone.classList.add('empty');
+            // create placeholder for empty dropzones
             createBoxPlaceholder(dropzone);
         } else {
             dropzone.classList.remove('empty')
         }
     });
 
+    // Update all dragboxes with the updateDragboxes function.
     updateDragboxes();
 }
 
+/**
+ * Function to initialize DragboxJS.
+ */
 const dragboxInit = () => {
+    //Check if there's any dropzone, then create it and update
     const hasDropzone = dragboxContainer.querySelector('.dropzone') !== null;
 
     if (!hasDropzone) {
@@ -268,7 +326,13 @@ const dragboxInit = () => {
     dragboxUpdate();
 }
 
-const dragboxStart = (options) => {
+/**
+ * Function to start DragboxJS.
+ * @param {Object} options Configuration object.
+ */
+export const dragboxStart = (options) => {
+    // check if dragboxcontainer or dragboxtemplate is missing
+
     if (!dragboxContainer) {
         throw new Error('Element with id "ddragbox-container" not found. Create a dragbox container by creating a div element with id "dragbox-container".');
     }
@@ -276,8 +340,11 @@ const dragboxStart = (options) => {
     if (!dragboxTemplate) {
         throw new Error('Template element with id "dragbox-template" not found. Create a dragbox template by creating a div element with id "dragbox-template".');
     }
+
+    // hide dragbox-template
     dragboxTemplate.style.display = "none";
 
+    // initialize settings and start DragboxJS
     initSettings(deepMerge({}, defaultOptions, options));
     dragboxInit();
 
@@ -286,16 +353,3 @@ const dragboxStart = (options) => {
     */
 }
 
-
-//since i'm testing the library on a index.html, just for development purpose, I'm setting some option and then call start
-
-const options = {
-    dragging: {
-        free: false,
-    },
-    dragbox: {
-        colorMethod: "shade",
-    }
-}
-
-dragboxStart(options);
