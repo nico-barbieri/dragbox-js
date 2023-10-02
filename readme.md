@@ -14,7 +14,7 @@ DragboxJS Library is a lightweight JavaScript library that simplifies the implem
 
 ## Getting Started
 
-### Installation
+### Installation \[NOT PUBLISHED YET! CANNOT BE INSTALLED WITH NPM\]
 
 To use DragboxJS Library in your project, follow these installation steps:
 
@@ -28,7 +28,7 @@ npm install dragbox-js
 
 #### Direct Download
 
-Alternatively, you can download the library files from the [GitHub repository](https://github.com/yourusername/my-drag-and-drop-library) and include them in your project manually.
+Alternatively, you can download the library files from the [GitHub repository](https://github.com/nico-barbieri/dragbox-js) and include them in your project manually.
 
 ### Usage
 
@@ -36,16 +36,17 @@ Here's how you can get started with DragboxJS Library:
 
 ```html
 <!-- Include the library files -->
-<link rel="stylesheet" href="path/to/my-library.css">
-<script src="path/to/my-library.js"></script>
+<link rel="stylesheet" href="path/to/dragbox.css">
+<script src="path/to/dragbox.js"></script>
 
 <!-- Create a container for drag-and-drop elements -->
-<div id="dragbox-container"></div>
-
-<!-- Create a hidden template for dragboxes -->
-<div id="dragbox-template" style="display: none;">
-  <!-- Customize your dragbox template here -->
+<div id="dragbox-container" class="dragbox-container">
+  <!-- Create a template for dragboxes -->
+  <div id="dragbox-template">
+    <!-- Customize your dragbox template here -->
+  </div>
 </div>
+
 
 <!-- Initialize the library with options -->
 <script>
@@ -87,19 +88,19 @@ Initialize the library with custom options.
 
 ### Other Functions
 
-Describe other important functions provided by your library here.
+WIP: Description of other useful functions.
 
 ## Examples
 
-Provide examples of how to use your library for common use cases. Include code snippets and explanations.
+WIP: Usage examples.
 
 ```html
-<!-- Example usage code here -->
+<!-- Example usage code -->
 ```
 
 ## Contributing
 
-Contributions to DragboxJS Library are welcome! If you have any ideas for improvements or find any issues, please open an issue or submit a pull request on the [GitHub repository](https://github.com/yourusername/my-drag-and-drop-library).
+Contributions to DragboxJS Library are welcome! If you have any ideas for improvements or find any issues, please open an issue or submit a pull request on the [GitHub repository](https://github.com/nico-barbieri/dragbox-js).
 
 ## License
 
