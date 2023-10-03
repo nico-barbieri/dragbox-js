@@ -8,22 +8,29 @@
   --db-dragzone-bg-color-2: rgb(0, 240, 192);
 }
 
-.dragbox-container {
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.dragboxjs-container {
   display: flex;
   transition: min-width 0.3s ease-in-out, min-height 0.3s ease-in-out, background 0.3s ease-in-out;
 }
-.dragbox-container * {
+.dragboxjs-container * {
+  min-width: 0px;
   min-height: 0px;
   transition: min-width 0.3s ease-in-out, min-height 0.3s ease-in-out, background 0.3s ease-in-out;
 }
-.dragbox-container .dropzone {
+.dragboxjs-container .dropzone {
   display: flex;
   flex-direction: column;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   /* &.empty {
       border: solid 1px var(--db-border-color);
   } */
 }
-.dragbox-container .dropzone .dragbox-placeholder {
+.dragboxjs-container .dropzone .dragbox-placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,10 +38,10 @@
   margin-top: 0.5rem;
   border: solid 1px var(--db-border-color);
 }
-.dragbox-container .dropzone .dragbox-placeholder:has(.dragbox-add:hover) {
+.dragboxjs-container .dropzone .dragbox-placeholder:has(.dragbox-add:hover) {
   background: var(--db-border-color);
 }
-.dragbox-container .dropzone .dragbox-placeholder .dragbox-add {
+.dragboxjs-container .dropzone .dragbox-placeholder .dragbox-add {
   border: none;
   background: none;
   cursor: pointer;
@@ -43,24 +50,28 @@
   font-size: 1.5rem;
   font-weight: 400;
 }
-.dragbox-container .dragbox {
+.dragboxjs-container .dragbox {
   display: flex;
   flex-direction: column;
   position: relative;
-  padding: 0.5rem 0.5rem 0.5rem 2rem;
 }
-.dragbox-container .dragbox.dragging {
+.dragboxjs-container .dragbox:not([data-dragboxdepth="1"]) {
+  margin: 0 0 0 2rem;
+}
+.dragboxjs-container .dragbox.dragging {
   opacity: 0.5;
   transition: opacity 0.3s ease-in-out;
+  cursor: grabbing;
 }
-.dragbox-container .dragbox:not(:first-child) {
+.dragboxjs-container .dragbox:not(:first-child) {
   border-top: solid 2px var(--db-border-color);
 }
-.dragbox-container .dragbox[data-dragboxDepth="1"]:not(:first-child) {
+.dragboxjs-container .dragbox[data-dragboxDepth="1"]:not(:first-child) {
   border-top: none;
   margin-top: 0.5rem;
 }
 
 .inputs {
   display: flex;
+  width: 100%;
 }/*# sourceMappingURL=dragbox.css.map */

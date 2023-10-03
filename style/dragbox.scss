@@ -8,13 +8,19 @@
     --db-dragzone-bg-color-2: rgb(0, 240, 192);
 }
 
-.dragbox-container {
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.dragboxjs-container {
     display: flex;
 
     transition: min-width 0.3s ease-in-out, min-height 0.3s ease-in-out, background 0.3s ease-in-out;
 
 
     * {
+        min-width: 0px;
         min-height: 0px;
         transition: min-width 0.3s ease-in-out, min-height 0.3s ease-in-out, background 0.3s ease-in-out;
     }
@@ -22,6 +28,7 @@
     .dropzone {
         display: flex;
         flex-direction: column;
+        padding: .5rem .5rem .5rem .5rem;  //.5 .5 .5 2 for indentation
 
         /* &.empty {
             border: solid 1px var(--db-border-color);
@@ -61,11 +68,15 @@
         display: flex;
         flex-direction: column;
         position: relative;
-        padding: .5rem .5rem .5rem 2rem;  
+
+        &:not([data-dragboxdepth = '1']) {
+            margin: 0 0 0 2rem;
+        }
 
         &.dragging {
             opacity: .5;
             transition: opacity .3s ease-in-out;
+            cursor: grabbing;
         }
 
         &:not(:first-child) {
@@ -83,4 +94,5 @@
 
 .inputs {
     display: flex;
+    width: 100%;
 }

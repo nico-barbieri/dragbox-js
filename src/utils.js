@@ -1,3 +1,10 @@
+/**
+ * Convert RGB values to HSL (Hue, Saturation, Lightness).
+ * @param {number} r - The red channel value (0-255).
+ * @param {number} g - The green channel value (0-255).
+ * @param {number} b - The blue channel value (0-255).
+ * @returns {object} An object containing HSL values: { h, s, l }
+ */
 export const rgbToHsl = (r, g, b) => {
     r /= 255;
     g /= 255;
@@ -33,6 +40,12 @@ export const rgbToHsl = (r, g, b) => {
     };
 }
 
+/**
+ * Convert a CSS RGB color string to HSL format.
+ * @param {string} rgbString - The CSS RGB color string (e.g., "rgb(255, 0, 0)").
+ * @returns {object} An object containing HSL values: { h, s, l }
+ * @throws {Error} Throws an error if the input format is invalid.
+ */
 export const cssRgbToHsl = rgbString => {
     // Extract individual RGB values from the CSS format string
     const rgbValues = rgbString.match(/\d+/g);
@@ -50,6 +63,12 @@ export const cssRgbToHsl = rgbString => {
     }
 }
 
+/**
+ * Deep merge multiple objects into one.
+ * @param {object} target - The target object to merge into.
+ * @param {...object} sources - The source objects to merge into the target.
+ * @returns {object} The merged object.
+ */
 export const deepMerge = (target, ...sources) => {
     for (const source of sources) {
         if (typeof source !== 'object') continue;
@@ -66,6 +85,12 @@ export const deepMerge = (target, ...sources) => {
     return target;
 }
 
+/**
+ * Calculate the depth of an element with a specific class in the DOM tree.
+ * @param {HTMLElement} element - The element to calculate the depth for.
+ * @param {string} className - The class name to search for in parent elements.
+ * @returns {number} The depth of the element with the specified class in the DOM tree.
+ */
 export const calculateDepth = (element, className) => {
     let depth = 1; 
     let parent = element.parentElement;
@@ -80,6 +105,12 @@ export const calculateDepth = (element, className) => {
     return depth;
 }
 
+/**
+ * Find the first parent element with a specific class.
+ * @param {HTMLElement} element - The element to start the search from.
+ * @param {string} className - The class name to search for in parent elements.
+ * @returns {HTMLElement|null} The first parent element with the specified class, or null if not found.
+ */
 export const findParentWithClass = (element, className) => {
     let parent = element.parentElement;
     while (parent) {
