@@ -1,4 +1,4 @@
-import DragboxJS from "../../src/index.js";
+import DragboxJS from "../../src/dragbox.js";
 
 const options = {
     logging: ['dragbox-creating', 'dragbox-dragstart'],

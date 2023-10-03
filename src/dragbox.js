@@ -20,7 +20,12 @@ class DragboxJS {
         };
 
         // Create a custom events
-        this.dragboxCreatedEvent = new Event('dragboxCreated');
+        this.dragboxCreatedEvent = new Event('dragboxCreated', {
+            bubbles: true,
+        });
+        this.dragboxMovedEvent = new Event('dragboxMoved', {
+            bubbles: true,
+        });
     }
 
     /**
@@ -63,9 +68,14 @@ class DragboxJS {
         this.template.style.display = "none";
         this.container.appendChild(this.createDropzone());
 
-        this.container.addEventListener('dragboxCreated', event => {
-            console.log("Dragbox created: " + event.target);
-        })
+        // ADDING EVENT LISTENERS
+        this.container.addEventListener('dragstart', this.onDragStart.bind(this));
+        this.container.addEventListener('drag', this.onDrag.bind(this));
+        this.container.addEventListener('dragend', this.onDragEnd.bind(this));
+        this.container.addEventListener('dragover', this.onDragOver.bind(this));
+        this.container.addEventListener('dragleave', this.onDragLeave.bind(this));
+        this.container.addEventListener('drop', this.onDrop.bind(this));
+
         this.update();
     }
 
@@ -107,12 +117,7 @@ class DragboxJS {
         // Create the element, assing class and updated id
         const dropzone = document.createElement('div');
         dropzone.classList.add('dropzone');
-        dropzone.id = `dropzone-${this.dropzoneID++}`;
-
-        // Add event listeners [TODO: Use single listeners on dragboxjs-container]
-        dropzone.addEventListener('dragover', this.onDragOver.bind(this));
-        dropzone.addEventListener('dragleave', this.onDragLeave.bind(this));
-        dropzone.addEventListener('drop', this.onDrop.bind(this));
+        dropzone.id = `dropzone-${this.dropzoneID++}`;       
 
         return dropzone;
     }
@@ -132,12 +137,7 @@ class DragboxJS {
          // Add the dragbox class and other attributes
         dragbox.classList.add('dragbox');
         dragbox.setAttribute('data-dragboxdepth', depth + 1);
-        dragbox.setAttribute('draggable', true);
-
-        // Adding the event listeners [TODO: Use single listeners on dragboxjs-container]
-        dragbox.addEventListener('dragstart', this.onDragStart.bind(this));
-        dragbox.addEventListener('drag', this.onDrag.bind(this));
-        dragbox.addEventListener('dragend', this.onDragEnd.bind(this));
+        dragbox.setAttribute('draggable', true);       
 
         // Create a new dropzone inside the new dragbox
         dragbox.appendChild(this.createDropzone());
@@ -145,103 +145,122 @@ class DragboxJS {
         return dragbox;
     }
 
-    onDragOver(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const placeholder = findParentWithClass(event.target, 'dragbox-placeholder');
-
-        if (placeholder) {
-            placeholder.style.minWidth = `${this.draggedboxStore.draggedboxSize.w}px`;
-            placeholder.style.minHeight = `${this.draggedboxStore.draggedboxSize.h}px`;
-        }
-    }
-
-    onDragLeave(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const placeholder = event.target.closest(".dragbox-placeholder");
-
-        if (placeholder) {
-            placeholder.style.minHeight = '';
-            placeholder.style.minWidth = '';
-        }
-    }
-
-    onDrop(event) {
-        event.stopPropagation();
-        let dropzone = event.target;
-
-        // check if target is a dropzone, otherwise find first parent dropzone
-        if (!event.target.classList.contains('dropzone')) {
-            dropzone = findParentWithClass(event.target, "dropzone");
-        }
-
-        try {
-            dropzone.lastChild.insertAdjacentElement('beforebegin', document.getElementById(this.draggedboxStore.draggedboxID));
-        } catch (error) {
-            console.warn('Cannot move dragbox in this position.');
-        }
-
-        const placeholder = event.target.closest(".dragbox-placeholder");
-
-        if (placeholder) {
-            placeholder.style.minHeight = '';
-            placeholder.style.minWidth = '';
-        }
-
-        this.update();
-    }
-
     onDragStart(event) {
-        this.log(`Moving ${event.target.id}...`, "dragbox-dragstart");
-
-        const draggedbox = event.target;
-
-        event.dataTransfer.effectAllowed = '';
-
-        draggedbox.classList.add('dragging');
-
-        draggedbox.querySelectorAll("*").forEach(draggedboxChild => {
-            draggedboxChild.style.pointerEvents = "none";
-        });
-
-        const draggedboxInfo = {
-            draggedboxID: event.target.id,
-            draggedboxSize: { w: event.target.offsetWidth, h: event.target.offsetHeight },
-        };
-
-        this.draggedboxStore = deepMerge({}, this.draggedboxStore, draggedboxInfo);
+        // DRAGBOX
+        if (event.target.classList.contains('dragbox')) {
+            this.log(`Moving ${event.target.id}...`, "dragbox-dragstart");
+    
+            const draggedbox = event.target;
+    
+            event.dataTransfer.effectAllowed = '';
+    
+            draggedbox.classList.add('dragging');
+    
+            draggedbox.querySelectorAll("*").forEach(draggedboxChild => {
+                draggedboxChild.style.pointerEvents = "none";
+            });
+    
+            const draggedboxInfo = {
+                draggedboxID: event.target.id,
+                draggedboxSize: { w: event.target.offsetWidth, h: event.target.offsetHeight },
+            };
+    
+            this.draggedboxStore = deepMerge({}, this.draggedboxStore, draggedboxInfo);
+        }
     }
 
     onDrag(event) {
-        const draggedbox = event.target;
-
-        if (draggedbox.initialMousePosition) {
-            const offsetX = event.clientX - draggedbox.initialMousePosition.x;
-            const offsetY = event.clientY - draggedbox.initialMousePosition.y;
-
-            draggedbox.style.left = `${offsetX}px`;
-            draggedbox.style.top = `${offsetY}px`;
+        // DRAGBOX
+        if (event.target.classList.contains('dragbox')) {
+            const draggedbox = event.target;
+    
+            if (draggedbox.initialMousePosition) {
+                const offsetX = event.clientX - draggedbox.initialMousePosition.x;
+                const offsetY = event.clientY - draggedbox.initialMousePosition.y;
+    
+                draggedbox.style.left = `${offsetX}px`;
+                draggedbox.style.top = `${offsetY}px`;
+            }
         }
     }
 
     onDragEnd(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        const draggedbox = event.target;
+        // DRAGBOX
+        if (event.target.classList.contains('dragbox')) {
+            event.preventDefault();
+            event.stopPropagation();
+            const draggedbox = event.target;
+    
+            draggedbox.classList.remove('dragging');
+            draggedbox.style.position = this.options.dragging.free? 'absolute' : 'relative';
+            draggedbox.querySelectorAll("*").forEach(draggedboxChild => {
+                draggedboxChild.style.pointerEvents = "all";
+            });
+    
+            delete draggedbox.initialMouseOffset;
+    
+            draggedbox.style.left = ``;
+            draggedbox.style.top = ``;
+        }
+    }
 
-        draggedbox.classList.remove('dragging');
-        draggedbox.style.position = this.options.dragging.free? 'absolute' : 'relative';
-        draggedbox.querySelectorAll("*").forEach(draggedboxChild => {
-            draggedboxChild.style.pointerEvents = "all";
-        });
+    onDragOver(event) {
+        // DROPZONE
+        if (event.target.classList.contains('dropzone') || findParentWithClass(event.target, 'dropzone')) {
+            event.preventDefault();
+            event.stopPropagation();
+    
+            const placeholder = findParentWithClass(event.target, 'dragbox-placeholder');
+    
+            if (placeholder) {
+                placeholder.style.minWidth = `${this.draggedboxStore.draggedboxSize.w}px`;
+                placeholder.style.minHeight = `${this.draggedboxStore.draggedboxSize.h}px`;
+            }
+        }
+    }
 
-        delete draggedbox.initialMouseOffset;
+    onDragLeave(event) {
+        // DROPZONE
+        if (event.target.classList.contains('dropzone') || findParentWithClass(event.target, 'dropzone')) {
+            event.preventDefault();
+            event.stopPropagation();
+    
+            const placeholder = event.target.closest(".dragbox-placeholder");
+    
+            if (placeholder) {
+                placeholder.style.minHeight = '';
+                placeholder.style.minWidth = '';
+            }
+        }
+    }
 
-        draggedbox.style.left = ``;
-        draggedbox.style.top = ``;
+    onDrop(event) {
+        // DROPZONE
+        if (event.target.classList.contains('dropzone') || findParentWithClass(event.target, 'dropzone')) {
+            event.stopPropagation();
+            let dropzone = event.target;
+    
+            // check if target is a dropzone, otherwise find first parent dropzone
+            if (!event.target.classList.contains('dropzone')) {
+                dropzone = findParentWithClass(event.target, "dropzone");
+            }
+    
+            try {
+                dropzone.lastChild.insertAdjacentElement('beforebegin', document.getElementById(this.draggedboxStore.draggedboxID));
+                document.getElementById(this.draggedboxStore.draggedboxID).dispatchEvent(this.dragboxMovedEvent);
+            } catch (error) {
+                console.warn('Cannot move dragbox in this position.');
+            }
+    
+            const placeholder = event.target.closest(".dragbox-placeholder");
+    
+            if (placeholder) {
+                placeholder.style.minHeight = '';
+                placeholder.style.minWidth = '';
+            }
+    
+            this.update();
+        }
     }
 
     /**
@@ -296,6 +315,7 @@ class DragboxJS {
         this.update();
         
         // dispatch a dragboxCreated event to link other possible functions
+
         newDragbox.dispatchEvent(this.dragboxCreatedEvent);
     }
 
