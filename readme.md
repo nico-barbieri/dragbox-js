@@ -34,7 +34,7 @@ To use DragboxJS in your project, follow these steps:
     <link rel="stylesheet" type="text/css" href="path/to/dragbox.css">
     ```
 
-    The style can be changed, but consider that the style may affect the DragboxJS behaviour.
+    The style can be changed, but consider that the style may affect DragboxJS behaviour.
 
 3. **Initialize DragboxJS**: Initialize DragboxJS by following the [Usage](#usage) instructions below.
 
@@ -89,7 +89,7 @@ Each dragbox also contains a `data-dragboxdepth` attribute, starting from the va
 DragboxJS provides custom events that you can use to enhance the functionality of your web application. Here are the available custom events:
 
 - `dragboxCreated`: Triggered when a new dragbox is created.
-- `dragboxMoved`: Triggered when a dragbox is moved within the container.
+- `dragboxMoved`: Triggered when a dragbox is dropped.
 
 You can listen for these events and add custom event handlers to perform actions based on these events.
 
