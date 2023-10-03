@@ -305,11 +305,8 @@ class DragboxJS {
         // create a new dragbox
         const newDragbox = this.createDragbox(dragboxdepth);
 
-        // create a new dropzone to contain the new dragbox
-        const populatedDropzone = this.createDropzone().appendChild(newDragbox);
-
         // insert the new dragbox before the "placeholder" element which creates dragboxes on click
-        dropzone.insertBefore(populatedDropzone, dropzone.childNodes[dropzone.childElementCount - 1]);
+        dropzone.insertBefore(newDragbox, dropzone.childNodes[dropzone.childElementCount - 1]);
 
         // update DragboxJS
         this.update();
