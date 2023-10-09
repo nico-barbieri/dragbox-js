@@ -26,6 +26,39 @@ class DragboxJS {
         this.dragboxMovedEvent = new Event('dragboxMoved', {
             bubbles: true,
         });
+
+        this.commandFunctions = {
+            delete: this.deleteElement.bind(this),
+            cut: this.cutElement.bind(this),
+            copy: this.copyElement.bind(this),
+            paste: this.pasteElement.bind(this),
+        };
+    }
+
+    /**
+     * Delete the element with given id.
+     * @param {String} elementId Id of the element to delete.
+     */
+    deleteElement(elementId) {
+        const elementToRemove = document.getElementById(elementId);
+        if (!elementToRemove) {
+            console.warn(`${elementId} not found.`);
+            return;
+        }
+        elementToRemove.remove();
+        this.log(`${elementId} deleted.`, "delete");
+    }
+
+    cutElement(elementId) {
+        // cut logic
+    }
+
+    copyElement(elementId) {
+        // copy logic
+    }
+
+    pasteElement(elementId) {
+        // paste logic
     }
 
     /**
@@ -69,12 +102,14 @@ class DragboxJS {
         this.container.appendChild(this.createDropzone());
 
         // ADDING EVENT LISTENERS
+        document.addEventListener('click', this.onClick.bind(this));
         this.container.addEventListener('dragstart', this.onDragStart.bind(this));
         this.container.addEventListener('drag', this.onDrag.bind(this));
         this.container.addEventListener('dragend', this.onDragEnd.bind(this));
         this.container.addEventListener('dragover', this.onDragOver.bind(this));
         this.container.addEventListener('dragleave', this.onDragLeave.bind(this));
         this.container.addEventListener('drop', this.onDrop.bind(this));
+        this.container.addEventListener('contextmenu', this.onContextMenu.bind(this));
 
         this.update();
     }
@@ -143,6 +178,16 @@ class DragboxJS {
         dragbox.appendChild(this.createDropzone());
 
         return dragbox;
+    }
+
+    // EVENTS
+    onClick(event) {
+        // get context menu if present
+        const contextMenu = document.getElementById('dragbox-contextmenu');
+
+        if (contextMenu && !contextMenu.contains(event.target)) {
+            contextMenu.remove();
+        }
     }
 
     onDragStart(event) {
@@ -261,6 +306,70 @@ class DragboxJS {
     
             this.update();
         }
+    }
+
+    onContextMenu(event) {
+        // check if a context menu is already open
+        const contextMenu = document.getElementById('dragbox-contextmenu');
+
+        if (contextMenu && !contextMenu.contains(event.target)) {
+            contextMenu.remove();
+        }
+        
+        if (event.target.classList.contains('dropzone')) {
+            event.preventDefault();
+            const dragboxCommands = ['delete', 'cut', 'copy', 'paste'];
+            const draggedbox = findParentWithClass(event.target, 'dragbox');
+
+            const contextMenu = this.generateContextMenu(draggedbox, dragboxCommands);
+
+            // Position the context menu
+            contextMenu.style.position = "absolute";
+            contextMenu.style.left = `${event.clientX}px`;
+            contextMenu.style.top = `${event.clientY}px`;
+
+            // Append the context menu to the document body
+            this.container.appendChild(contextMenu);
+        }
+    }
+
+    /**
+     * Generate a context menu for an HTML element.
+     * 
+     * @param {HTMLElement} element - The HTML element to attach the context menu to.
+     * @param {Array.<string>} commands - Array of command names to include in the context menu.
+     * @returns {HTMLElement} Context menu element.
+     */
+    generateContextMenu(element, commands) {
+        // Context Menu div creation
+        const contextMenu = document.createElement("div");
+        contextMenu.classList.add("dragbox-contextmenu");
+        contextMenu.id = "dragbox-contextmenu";
+      
+        // Context Menu Command List creation
+        const ul = document.createElement("ul");
+      
+        commands.forEach((command) => {
+          const li = document.createElement("li");
+          li.textContent = command;
+      
+          // Add event listeners to list elements
+          li.addEventListener("click", () => {
+            if (!this.commandFunctions[command]) return;
+
+            // Call corresponding command function
+            this.commandFunctions[command](element.id);
+      
+            // Removing context menu
+            contextMenu.remove();
+          });
+      
+          ul.appendChild(li);
+        });
+      
+        contextMenu.appendChild(ul);
+      
+        return contextMenu
     }
 
     /**

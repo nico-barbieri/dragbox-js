@@ -1,7 +1,8 @@
 :root {
     --db-base-background: rgb(255, 255, 255);
     --db-border-color: rgba(255, 255, 255, 0.5);
-    --db-bordee-radius: 0.5rem;
+    --db-border-color-dark: rgba(0, 0, 0, 0.25);
+    --db-border-radius: 0.25rem;
     --db-default-block-width: 5rem;
     --db-default-block-height: 5rem;
     --db-dragzone-bg-color-1: rgb(25, 123, 210);
@@ -90,9 +91,46 @@
             }
         }
     }
+
+    .dragbox-contextmenu {
+        display: flex;
+        flex-direction: column;
+        background: var(--db-base-background);
+        box-shadow: .25rem .5rem .75rem -.5rem rgba(0, 0, 0, 0.25);
+        border-radius: var(--db-border-radius);
+        overflow: hidden;
+        transform-origin: top left;
+
+        animation: openContext .15s ease-in-out 0s 1 forwards;
+        * {
+            text-decoration: none;
+            list-style: none;
+            text-transform: capitalize;
+        }
+        li {
+            padding: .25rem 1rem;
+            cursor: pointer;
+            transition: background 0s;
+            &:not(:last-child) {
+                border-bottom: 1px solid var(--db-border-color-dark);
+            }
+            &:hover {
+                background: var(--db-dragzone-bg-color-2);
+            }
+        }
+    }
 }
 
 .inputs {
     display: flex;
     width: 100%;
+}
+
+@keyframes openContext {
+    0% {
+        scale: 0;
+    }
+    100% {
+        scale: 1;
+    }
 }

@@ -1,7 +1,8 @@
 :root {
   --db-base-background: rgb(255, 255, 255);
   --db-border-color: rgba(255, 255, 255, 0.5);
-  --db-bordee-radius: 0.5rem;
+  --db-border-color-dark: rgba(0, 0, 0, 0.25);
+  --db-border-radius: 0.25rem;
   --db-default-block-width: 5rem;
   --db-default-block-height: 5rem;
   --db-dragzone-bg-color-1: rgb(25, 123, 210);
@@ -70,8 +71,43 @@
   border-top: none;
   margin-top: 0.5rem;
 }
+.dragboxjs-container .dragbox-contextmenu {
+  display: flex;
+  flex-direction: column;
+  background: var(--db-base-background);
+  box-shadow: 0.25rem 0.5rem 0.75rem -0.5rem rgba(0, 0, 0, 0.25);
+  border-radius: var(--db-border-radius);
+  overflow: hidden;
+  transform-origin: top left;
+  animation: openContext 0.15s ease-in-out 0s 1 forwards;
+}
+.dragboxjs-container .dragbox-contextmenu * {
+  text-decoration: none;
+  list-style: none;
+  text-transform: capitalize;
+}
+.dragboxjs-container .dragbox-contextmenu li {
+  padding: 0.25rem 1rem;
+  cursor: pointer;
+  transition: background 0s;
+}
+.dragboxjs-container .dragbox-contextmenu li:not(:last-child) {
+  border-bottom: 1px solid var(--db-border-color-dark);
+}
+.dragboxjs-container .dragbox-contextmenu li:hover {
+  background: var(--db-dragzone-bg-color-2);
+}
 
 .inputs {
   display: flex;
   width: 100%;
+}
+
+@keyframes openContext {
+  0% {
+    scale: 0;
+  }
+  100% {
+    scale: 1;
+  }
 }/*# sourceMappingURL=dragbox.css.map */
