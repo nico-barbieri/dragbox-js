@@ -1,0 +1,7 @@
+.dragbox:not(:first-child) {
+  border-top: solid 2px var(--db-border-color);
+}
+.dragbox[data-dragboxDepth="1"]:not(:first-child) {
+  border-top: none;
+  margin-top: 0.5rem;
+}/*# sourceMappingURL=style.css.map */

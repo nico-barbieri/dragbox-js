@@ -76,6 +76,9 @@ class DragboxJS {
                 secondaryColor: "rgb(0, 240, 192)",
                 colorMethod: "shade",  // shade / alternate
             },
+            placeholder: {
+                generation: 'none', // auto / none (or leave blank)
+            },
         };
     }
 
@@ -99,7 +102,21 @@ class DragboxJS {
 
         this.container.classList.add('dragboxjs-container')
         this.template.style.display = "none";
-        this.container.appendChild(this.createDropzone());
+
+        if (document.getElementById('dragboxjs-skeleton')) {
+            this.populateSkeleton();
+        } else {
+            this.container.appendChild(this.createDropzone());
+        }
+
+        // Generate placeholders
+        const dropzones = this.container.querySelectorAll(".dropzone");
+
+        // Check if any dropzone is empty
+        dropzones.forEach(dropzone => {
+            dropzone.classList.add('empty');
+            this.createBoxPlaceholder(dropzone);
+        });
 
         // ADDING EVENT LISTENERS
         document.addEventListener('click', this.onClick.bind(this));
@@ -127,7 +144,9 @@ class DragboxJS {
 
             if (!hasBox) {
                 dropzone.classList.add('empty');
-                this.createBoxPlaceholder(dropzone);
+                if (this.options.placeholder.generation === 'auto')  {
+                    this.createBoxPlaceholder(dropzone);
+                }
             } else {
                 dropzone.classList.remove('empty');
             }
@@ -142,16 +161,38 @@ class DragboxJS {
             dragbox.setAttribute('data-dragboxdepth', depth);
             this.colorDragbox(dragbox);
         });
+
+        // PREVENT <img> and <a> FROM DRAGGING
+        this.container.querySelectorAll('img').forEach(img => img.setAttribute('draggable', false));
+        this.container.querySelectorAll('a').forEach(a => a.setAttribute('draggable', false));
+    }
+
+    populateSkeleton() {
+        const skeletonBoxes = this.container.querySelectorAll('.skeleton-box');
+        skeletonBoxes.forEach(box => {
+            const config = {
+                direction: box.getAttribute('data-dropzoneDirection') ?? 'vertical',
+            }
+            box.appendChild(this.createDropzone(config));
+        })
     }
 
     /**
      * Function to create a new dropzone.
+     * @param {Object} config Configuration object.
      * @returns an HTMLElement: the dropzone created.
      */
-    createDropzone() {
+    createDropzone(config) {
+        const defaultConfig = {
+            direction: 'vertical',
+        };
+
+        config = {...defaultConfig, ...config};
+
         // Create the element, assing class and updated id
         const dropzone = document.createElement('div');
         dropzone.classList.add('dropzone');
+        config.direction === 'vertical' ? dropzone.classList.add('vertical') : dropzone.classList.add('horizontal');
         dropzone.id = `dropzone-${this.dropzoneID++}`;       
 
         return dropzone;
@@ -175,7 +216,9 @@ class DragboxJS {
         dragbox.setAttribute('draggable', true);       
 
         // Create a new dropzone inside the new dragbox
-        dragbox.appendChild(this.createDropzone());
+        if (this.options.placeholder.generation === 'auto') {
+            dragbox.appendChild(this.createDropzone());
+        }
 
         return dragbox;
     }
@@ -258,7 +301,7 @@ class DragboxJS {
             const placeholder = findParentWithClass(event.target, 'dragbox-placeholder');
     
             if (placeholder) {
-                placeholder.style.minWidth = `${this.draggedboxStore.draggedboxSize.w}px`;
+                placeholder.style.minWidth = `min(${this.draggedboxStore.draggedboxSize.w}px, 100%)`;
                 placeholder.style.minHeight = `${this.draggedboxStore.draggedboxSize.h}px`;
             }
         }
@@ -316,7 +359,7 @@ class DragboxJS {
             contextMenu.remove();
         }
         
-        if (event.target.classList.contains('dropzone')) {
+        if (event.target.classList.contains('dropzone') || findParentWithClass(event.target, 'dragbox')) {
             event.preventDefault();
             const dragboxCommands = ['delete', 'cut', 'copy', 'paste'];
             const draggedbox = findParentWithClass(event.target, 'dragbox');

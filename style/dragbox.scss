@@ -28,19 +28,24 @@
 
     .dropzone {
         display: flex;
+        height: 100%;
+        width: 100%;
         flex-direction: column;
-        padding: .5rem .5rem .5rem .5rem;  //.5 .5 .5 2 for indentation
+        padding: .5rem .5rem .5rem .5rem;
 
-        /* &.empty {
-            border: solid 1px var(--db-border-color);
-        } */
+        &.horizontal {
+            flex-direction: row;
+        }
 
         .dragbox-placeholder {
             display: flex;
+            height: 100%;
+            width: 100%;
+            max-height: 100%;
+            max-width: 100%;
             justify-content: center;
             align-items: center;
-
-            width: 100%;
+            align-self: center;
 
             margin-top: .5rem;
 
@@ -70,25 +75,14 @@
         flex-direction: column;
         position: relative;
 
-        &:not([data-dragboxdepth = '1']) {
+        /* &:not([data-dragboxdepth = '1']) {
             margin: 0 0 0 2rem;
-        }
+        } */
 
         &.dragging {
             opacity: .5;
             transition: opacity .3s ease-in-out;
             cursor: grabbing;
-        }
-
-        &:not(:first-child) {
-            border-top: solid 2px var(--db-border-color);
-        }
-
-        &[data-dragboxDepth = "1"] {
-            &:not(:first-child) {
-                border-top: none;
-                margin-top: .5rem;
-            }
         }
     }
 

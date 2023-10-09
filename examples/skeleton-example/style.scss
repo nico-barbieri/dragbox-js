@@ -1,0 +1,162 @@
+* {
+    box-sizing: border-box;
+}
+
+.skeleton-box {
+    box-shadow: inset 0 0 0 1px rgb(0, 0, 0, .33);
+}
+
+
+// SKELETON
+.layout {
+    width: 100%;
+    .layout-container {
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+
+        .header {
+            display: flex;
+            width: 100%;
+            height: 5rem;
+
+            .logo {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                aspect-ratio: 1;
+
+                img {
+                    object-fit: cover;
+                }
+            }
+
+            .menu {
+                display: flex;
+                gap: .5rem;
+            }
+        }
+
+        .body {
+            display: flex;
+            min-height: calc(100svh - 5rem);
+
+            .column-l {
+                width: 25%;
+                display: flex;
+                flex-direction: column;
+                padding: .5rem;
+                gap: .5rem;
+            }
+
+            .column-c {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                padding: .5rem 0;
+                gap: .5rem;
+
+                .top {
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+                }
+
+                .bottom {
+                    display: flex;
+                    width: 100%;
+                    gap: .5rem;
+                    justify-content: space-between;
+                }
+            }
+
+            .column-r {
+                width: 25%;
+                display: flex;
+                flex-direction: column;
+                padding: .5rem;
+                gap: .5rem;
+            }
+        }
+
+        .footer {
+            display: flex;
+            width: 100%;
+        }
+    }
+}
+
+// DRAGBOXJS STYLE OVERRIDE
+
+.dragboxjs-container {
+    .dragbox {
+        padding: 0;
+    }
+
+    .dropzone {
+        padding: 0;
+
+        &.horizontal .dragbox-placeholder {
+            max-width: 2rem;
+        }
+
+        &.vertical .dragbox-placeholder {
+            max-height: 2rem;
+        }
+
+        &.empty .dragbox-placeholder {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+        }
+
+        .dragbox-placeholder {
+            margin: 0;
+        }
+    }
+}
+
+// template
+
+.card {
+    display: flex;
+    flex-direction: column;
+
+    .image-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 1rem;
+        border-bottom: 1px solid rgb(61, 43, 142);
+        max-height: 10rem;
+
+        img {
+            object-fit: cover;
+        }
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        padding: .5rem;
+
+        p {
+            text-transform: capitalize;
+            overflow: hidden;
+            mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 75%);
+        }
+
+        a {
+            text-decoration: none;
+            color: lightseagreen;
+
+            &:hover {
+                opacity: .75;
+                cursor: pointer;
+            }
+        }
+    }
+}

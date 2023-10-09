@@ -7,9 +7,10 @@ const options = {
     },
     dragbox: {
         colorMethod: "shade",
+        primaryColor: 'rgb(200,200,200)',
     },
     placeholder: {
-        generation: 'auto',
+        generation: 'none',
     }
 }
 

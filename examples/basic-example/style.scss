@@ -1,0 +1,12 @@
+.dragbox {
+    &:not(:first-child) {
+        border-top: solid 2px var(--db-border-color);
+    }
+    
+    &[data-dragboxDepth = "1"] {
+        &:not(:first-child) {
+            border-top: none;
+            margin-top: .5rem;
+        }
+    }
+}
